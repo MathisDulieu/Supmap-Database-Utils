@@ -1,0 +1,10 @@
+services:
+  database-utils:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NEXUS_URL=${{ shared.NEXUS_URL }}
+      - NEXUS_USERNAME=${{ shared.NEXUS_USERNAME }}
+      - NEXUS_PASSWORD=${{ shared.NEXUS_PASSWORD }}
+    restart: "no"
