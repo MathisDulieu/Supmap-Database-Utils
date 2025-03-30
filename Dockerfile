@@ -11,6 +11,9 @@ RUN chmod +x ./mvnw
 
 COPY src/ src/
 
-RUN ./mvnw clean install -DskipTests
+ARG NEXUS_USERNAME
+ARG NEXUS_PASSWORD
+
+RUN ./mvnw clean install -DskipTests -Dnexus.username=${NEXUS_USERNAME} -Dnexus.password=${NEXUS_PASSWORD}
 
 CMD ["./mvnw", "deploy", "-DskipTests", "-s", "/tmp/settings.xml"]
