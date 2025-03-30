@@ -11,6 +11,6 @@ RUN chmod +x ./mvnw
 
 COPY src/ src/
 
-RUN ./mvnw clean install -DskipTests -s /tmp/settings.xml
+RUN ./mvnw clean install -DskipTests
 
 CMD ["./mvnw", "deploy", "-DskipTests", "-s", "/tmp/settings.xml"]
