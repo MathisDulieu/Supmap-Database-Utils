@@ -4,11 +4,6 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>nexus</id>
-            <username>${env.NEXUS_USERNAME}</username>
-            <password>${env.NEXUS_PASSWORD}</password>
-        </server>
-        <server>
             <id>nexus-releases</id>
             <username>${env.NEXUS_USERNAME}</username>
             <password>${env.NEXUS_PASSWORD}</password>

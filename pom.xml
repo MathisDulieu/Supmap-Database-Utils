@@ -14,19 +14,6 @@
 	<name>database-utils</name>
 	<description>Demo project for Spring Boot</description>
 
-	<repositories>
-		<repository>
-			<id>nexus</id>
-			<url>https://nexus3-production.up.railway.app/repository/maven-public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<distributionManagement>
 		<repository>
 			<id>nexus-releases</id>
