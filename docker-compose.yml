@@ -7,4 +7,6 @@ services:
       - NEXUS_URL=${{ shared.NEXUS_URL }}
       - NEXUS_USERNAME=${{ shared.NEXUS_USERNAME }}
       - NEXUS_PASSWORD=${{ shared.NEXUS_PASSWORD }}
+      - MONGO_URI=${{ shared.MONGO_URI }}
+      - DATABASE_NAME=${{ shared.DATABASE_NAME }}
     restart: "no"
