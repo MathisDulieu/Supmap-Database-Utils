@@ -1,7 +1,6 @@
 package com.novus.database_utils;
 
 import com.novus.database_utils.Alert.AlertDao;
-import com.novus.database_utils.Common.Methods;
 import com.novus.database_utils.Location.LocationDao;
 import com.novus.database_utils.Newsletter.NewsletterDao;
 import com.novus.database_utils.NewsletterSubscription.NewsletterSubscriptionDao;
@@ -16,31 +15,32 @@ public class DatabaseUtilsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public <T> UserDao<T> userDao(MongoTemplate mongoTemplate, Methods methods) {
-        return new UserDao<>(mongoTemplate, methods);
+    public <T> UserDao<T> userDao(MongoTemplate mongoTemplate) {
+        return new UserDao<>(mongoTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public <T> AlertDao<T> alertDao(MongoTemplate mongoTemplate, Methods methods) {
-        return new AlertDao<>(mongoTemplate, methods);
+    public <T> AlertDao<T> alertDao(MongoTemplate mongoTemplate) {
+        return new AlertDao<>(mongoTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public <T> LocationDao<T> locationDao(MongoTemplate mongoTemplate, Methods methods) {
-        return new LocationDao<>(mongoTemplate, methods);
+    public <T> LocationDao<T> locationDao(MongoTemplate mongoTemplate) {
+        return new LocationDao<>(mongoTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public <T> NewsletterDao<T> newsletterDao(MongoTemplate mongoTemplate, Methods methods) {
-        return new NewsletterDao<>(mongoTemplate, methods);
+    public <T> NewsletterDao<T> newsletterDao(MongoTemplate mongoTemplate) {
+        return new NewsletterDao<>(mongoTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public <T> NewsletterSubscriptionDao<T> newsletterSubscriptionDao(MongoTemplate mongoTemplate, Methods methods) {
-        return new NewsletterSubscriptionDao<>(mongoTemplate, methods);
+    public <T> NewsletterSubscriptionDao<T> newsletterSubscriptionDao(MongoTemplate mongoTemplate) {
+        return new NewsletterSubscriptionDao<>(mongoTemplate);
     }
+
 }
