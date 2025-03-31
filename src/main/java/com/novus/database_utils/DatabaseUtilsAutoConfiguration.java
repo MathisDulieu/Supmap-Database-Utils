@@ -1,6 +1,7 @@
 package com.novus.database_utils;
 
 import com.novus.database_utils.Alert.AlertDao;
+import com.novus.database_utils.Common.Methods;
 import com.novus.database_utils.Location.LocationDao;
 import com.novus.database_utils.Newsletter.NewsletterDao;
 import com.novus.database_utils.NewsletterSubscription.NewsletterSubscriptionDao;
@@ -15,32 +16,31 @@ public class DatabaseUtilsAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UserDao userDao(MongoTemplate mongoTemplate) {
-        return new UserDao(mongoTemplate);
+    public <T> UserDao<T> userDao(MongoTemplate mongoTemplate, Methods methods) {
+        return new UserDao<>(mongoTemplate, methods);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public AlertDao alertDao(MongoTemplate mongoTemplate) {
-        return new AlertDao(mongoTemplate);
+    public <T> AlertDao<T> alertDao(MongoTemplate mongoTemplate, Methods methods) {
+        return new AlertDao<>(mongoTemplate, methods);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public LocationDao locationDao(MongoTemplate mongoTemplate) {
-        return new LocationDao(mongoTemplate);
+    public <T> LocationDao<T> locationDao(MongoTemplate mongoTemplate, Methods methods) {
+        return new LocationDao<>(mongoTemplate, methods);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public NewsletterDao newsletterDao(MongoTemplate mongoTemplate) {
-        return new NewsletterDao(mongoTemplate);
+    public <T> NewsletterDao<T> newsletterDao(MongoTemplate mongoTemplate, Methods methods) {
+        return new NewsletterDao<>(mongoTemplate, methods);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public NewsletterSubscriptionDao newsletterSubscriptionDao(MongoTemplate mongoTemplate) {
-        return new NewsletterSubscriptionDao(mongoTemplate);
+    public <T> NewsletterSubscriptionDao<T> newsletterSubscriptionDao(MongoTemplate mongoTemplate, Methods methods) {
+        return new NewsletterSubscriptionDao<>(mongoTemplate, methods);
     }
-
 }
