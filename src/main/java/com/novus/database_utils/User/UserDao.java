@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class UserDao<T> {
@@ -12,8 +14,8 @@ public class UserDao<T> {
 
     private static final String USER_COLLECTION = "USERS";
 
-    public T findById(String id, Class<T> entityClass) {
-        return mongoTemplate.findById(id, entityClass, USER_COLLECTION);
+    public Optional<T> findById(String id, Class<T> entityClass) {
+        return Optional.of(mongoTemplate.findById(id, entityClass, USER_COLLECTION));
     }
 
     public void save(T entity) {

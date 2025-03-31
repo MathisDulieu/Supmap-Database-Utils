@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class AlertDao<T> {
@@ -12,8 +14,8 @@ public class AlertDao<T> {
 
     private static final String ALERT_COLLECTION = "ALERTS";
 
-    public T findById(String id, Class<T> entityClass) {
-        return mongoTemplate.findById(id, entityClass, ALERT_COLLECTION);
+    public Optional<T> findById(String id, Class<T> entityClass) {
+        return Optional.of(mongoTemplate.findById(id, entityClass, ALERT_COLLECTION));
     }
 
     public void save(T entity) {

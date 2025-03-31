@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class NewsletterSubscriptionDao<T> {
@@ -12,8 +14,8 @@ public class NewsletterSubscriptionDao<T> {
 
     private static final String NEWSLETTER_SUBSCRIPTION_COLLECTION = "NEWSLETTER_SUBSCRIPTIONS";
 
-    public T findById(String id, Class<T> entityClass) {
-        return mongoTemplate.findById(id, entityClass, NEWSLETTER_SUBSCRIPTION_COLLECTION);
+    public Optional<T> findById(String id, Class<T> entityClass) {
+        return Optional.of(mongoTemplate.findById(id, entityClass, NEWSLETTER_SUBSCRIPTION_COLLECTION));
     }
 
     public void save(T entity) {
