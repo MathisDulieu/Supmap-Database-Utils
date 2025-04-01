@@ -1,11 +1,14 @@
 package com.novus.database_utils.User;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -38,6 +41,22 @@ public class UserDao<T> {
 
     public Optional<T> findByEmail(String email, Class<T> entityClass) {
         return Optional.of(mongoTemplate.findOne(new Query(Criteria.where("email").is(email)), entityClass, USER_COLLECTION));
+    }
+
+    public List<T> searchUsersByUsernamePrefix(String keyword, int page, Class<T> entityClass) {
+        Aggregation aggregation = buildUserSearchAggregation(keyword, page);
+        return mongoTemplate.aggregate(aggregation, USER_COLLECTION, entityClass).getMappedResults();
+    }
+
+    private Aggregation buildUserSearchAggregation(String keyword, int page) {
+        int offset = page * 10;
+
+        return Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("username").regex("(?i)^" + keyword)),
+                Aggregation.sort(Sort.by(Sort.Direction.ASC, "username")),
+                Aggregation.skip(offset),
+                Aggregation.limit(10)
+        );
     }
 
 }
