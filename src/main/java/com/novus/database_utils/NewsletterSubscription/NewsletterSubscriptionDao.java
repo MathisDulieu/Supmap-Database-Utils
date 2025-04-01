@@ -2,6 +2,8 @@ package com.novus.database_utils.NewsletterSubscription;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -24,6 +26,10 @@ public class NewsletterSubscriptionDao<T> {
 
     public void delete(T entity) {
         mongoTemplate.remove(entity, NEWSLETTER_SUBSCRIPTION_COLLECTION);
+    }
+
+    public boolean isEmailAlreadySubscribed(String email) {
+        return mongoTemplate.exists(new Query(Criteria.where("email").is(email)), NEWSLETTER_SUBSCRIPTION_COLLECTION);
     }
 
 }
