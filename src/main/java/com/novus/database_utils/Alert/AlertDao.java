@@ -33,7 +33,7 @@ public class AlertDao<T> {
         mongoTemplate.remove(entity, ALERT_COLLECTION);
     }
 
-    private List<T> findAlertsByPosition(String latitude, String longitude, Class<T> entityClass) {
+    public List<T> findAlertsByPosition(String latitude, String longitude, Class<T> entityClass) {
         double lat = Double.parseDouble(latitude);
         double lng = Double.parseDouble(longitude);
 
@@ -50,7 +50,7 @@ public class AlertDao<T> {
         return mongoTemplate.find(query, entityClass, ALERT_COLLECTION);
     }
 
-    private List<T> findAlertsByRoute(List<T> geoPoints, Class<T> entityClass) {
+    public List<T> findAlertsByRoute(List<T> geoPoints, Class<T> entityClass) {
         Set<T> uniqueAlerts = new HashSet<>();
 
         Distance distance = new Distance(0.5, Metrics.KILOMETERS);
