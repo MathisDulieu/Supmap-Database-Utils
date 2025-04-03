@@ -2,6 +2,10 @@ package com.novus.database_utils.User;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Circle;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -57,6 +61,20 @@ public class UserDao<T> {
                 Aggregation.skip(offset),
                 Aggregation.limit(10)
         );
+    }
+
+    public List<T> findNearByUsers(double latitude, double longitude, Class<T> entityClass) {
+        Point center = new Point(longitude, latitude);
+
+        Distance distance = new Distance(0.5, Metrics.KILOMETERS);
+
+        Circle circle = new Circle(center, distance);
+
+        Query query = new Query(
+                Criteria.where("lastKnownLocation").withinSphere(circle)
+        );
+
+        return mongoTemplate.find(query, entityClass, USER_COLLECTION);
     }
 
 }
