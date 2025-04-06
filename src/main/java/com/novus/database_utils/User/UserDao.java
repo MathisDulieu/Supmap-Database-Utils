@@ -10,8 +10,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +77,64 @@ public class UserDao<T> {
         );
 
         return mongoTemplate.find(query, entityClass, USER_COLLECTION);
+    }
+
+    public void updateUserActivityStatus() {
+        Calendar todayThreshold = getTodayThreshold();
+        Calendar monthThreshold = getMonthThreshold();
+
+        markInactiveUsers(todayThreshold, monthThreshold);
+        reactivateUsers(todayThreshold, monthThreshold);
+    }
+
+    private Calendar getTodayThreshold() {
+        Calendar todayThreshold = Calendar.getInstance();
+        todayThreshold.add(Calendar.DAY_OF_MONTH, -1);
+        return todayThreshold;
+    }
+
+    private Calendar getMonthThreshold() {
+        Calendar monthThreshold = Calendar.getInstance();
+        monthThreshold.add(Calendar.MONTH, -1);
+        return monthThreshold;
+    }
+
+    private void markInactiveUsers(Calendar todayThreshold, Calendar monthThreshold) {
+        markDailyInactiveUsers(todayThreshold);
+        markMonthlyInactiveUsers(monthThreshold);
+    }
+
+    private void markDailyInactiveUsers(Calendar todayThreshold) {
+        Update todayUpdate = new Update().set("todayStatus", "INACTIVE");
+        Query todayQuery = new Query(Criteria.where("lastActivityDate").lt(todayThreshold.getTime())
+                .and("todayStatus").is("ACTIVE"));
+        mongoTemplate.updateMulti(todayQuery, todayUpdate, USER_COLLECTION);
+    }
+
+    private void markMonthlyInactiveUsers(Calendar monthThreshold) {
+        Update monthUpdate = new Update().set("monthStatus", "INACTIVE");
+        Query monthQuery = new Query(Criteria.where("lastActivityDate").lt(monthThreshold.getTime())
+                .and("monthStatus").is("ACTIVE"));
+        mongoTemplate.updateMulti(monthQuery, monthUpdate, USER_COLLECTION);
+    }
+
+    private void reactivateUsers(Calendar todayThreshold, Calendar monthThreshold) {
+        reactivateDailyUsers(todayThreshold);
+        reactivateMonthlyUsers(monthThreshold);
+    }
+
+    private void reactivateDailyUsers(Calendar todayThreshold) {
+        Update reactivateTodayUpdate = new Update().set("todayStatus", "ACTIVE");
+        Query reactivateTodayQuery = new Query(Criteria.where("lastActivityDate").gte(todayThreshold.getTime())
+                .and("todayStatus").is("INACTIVE"));
+        mongoTemplate.updateMulti(reactivateTodayQuery, reactivateTodayUpdate, USER_COLLECTION);
+    }
+
+    private void reactivateMonthlyUsers(Calendar monthThreshold) {
+        Update reactivateMonthUpdate = new Update().set("monthStatus", "ACTIVE");
+        Query reactivateMonthQuery = new Query(Criteria.where("lastActivityDate").gte(monthThreshold.getTime())
+                .and("monthStatus").is("INACTIVE"));
+        mongoTemplate.updateMulti(reactivateMonthQuery, reactivateMonthUpdate, USER_COLLECTION);
     }
 
 }
