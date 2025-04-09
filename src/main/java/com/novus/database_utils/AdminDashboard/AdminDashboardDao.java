@@ -24,10 +24,13 @@ public class AdminDashboardDao<T> {
         return Optional.of(mongoTemplate.findOne(new Query().limit(1), entityClass, ADMIN_DASHBOARD_COLLECTION));
     }
 
-    public void upsert(String id, Map<Integer, Double> appRatingByNumberOfRate, List<T> topContributors,
-                     List<T> userGrowthStats, T userActivityMetrics, List<T> routeRecalculations,
-                       Double incidentConfirmationRate, Map<String, Integer> incidentsByType,
-                       int totalRoutesProposed) {
+    public <T1, T2, T3, T4> void upsert(String id, Map<Integer, Double> appRatingByNumberOfRate,
+                                        List<T1> topContributors,
+                                        List<T2> userGrowthStats,
+                                        T3 userActivityMetrics,
+                                        List<T4> routeRecalculations,
+                                        Double incidentConfirmationRate, Map<String, Integer> incidentsByType,
+                                        int totalRoutesProposed) {
 
         mongoTemplate.upsert(new Query(where("_id").is(id)),
                 new Update()
