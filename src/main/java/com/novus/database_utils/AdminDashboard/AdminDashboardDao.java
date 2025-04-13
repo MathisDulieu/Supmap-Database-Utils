@@ -1,11 +1,14 @@
 package com.novus.database_utils.AdminDashboard;
 
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +47,37 @@ public class AdminDashboardDao<T> {
                         .set("incidentsByType", incidentsByType)
                         .set("totalRoutesProposed", totalRoutesProposed)
                 , ADMIN_DASHBOARD_COLLECTION );
+    }
+
+    public <U> List<U> findTopContributors(Class<U> userClass) {
+        List<Document> pipeline = createTopContributorsPipeline();
+
+        return mongoTemplate.aggregate(
+                Aggregation.newAggregation(
+                        context -> new Document("$facet", new Document("results", pipeline)),
+                        Aggregation.unwind("results"),
+                        Aggregation.replaceRoot("results")
+                ),
+                mongoTemplate.getCollectionName(userClass),
+                userClass
+        ).getMappedResults();
+    }
+
+    private List<Document> createTopContributorsPipeline() {
+        return Arrays.asList(
+                new Document("$match", new Document("userStats", new Document("$exists", true))),
+                new Document("$addFields",
+                        new Document("totalContributions",
+                                new Document("$add", Arrays.asList(
+                                        "$userStats.totalReportsSubmitted",
+                                        "$userStats.validatedReports",
+                                        "$userStats.invalidatedReports"
+                                ))
+                        )
+                ),
+                new Document("$sort", new Document("totalContributions", -1)),
+                new Document("$limit", 5)
+        );
     }
 
 }
