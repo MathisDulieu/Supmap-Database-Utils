@@ -12,9 +12,13 @@
 
 	<groupId>com.novus</groupId>
 	<artifactId>database-utils</artifactId>
-	<version>1.1.4</version>
+	<version>1.1.5</version>
 	<name>database-utils</name>
-	<description>Demo project for Spring Boot</description>
+	<description>
+		Database-Utils is a core utility library for the SUPMAP application that provides common database
+		operations, connection management, and data access tools used across all microservices. This module
+		ensures consistent database interactions and abstracts away the complexity of database operations.
+	</description>
 
 	<distributionManagement>
 		<repository>

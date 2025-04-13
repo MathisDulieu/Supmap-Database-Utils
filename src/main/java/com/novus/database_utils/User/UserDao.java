@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,6 +136,37 @@ public class UserDao<T> {
         Query reactivateMonthQuery = new Query(Criteria.where("lastActivityDate").gte(monthThreshold.getTime())
                 .and("monthStatus").is("INACTIVE"));
         mongoTemplate.updateMulti(reactivateMonthQuery, reactivateMonthUpdate, USER_COLLECTION);
+    }
+
+    public <Q> int countDailyActiveUsers(Class<Q> entityClass) {
+        Query query = new Query(Criteria.where("todayStatus").is("ACTIVE"));
+        return (int) mongoTemplate.count(query, entityClass, USER_COLLECTION);
+    }
+
+    public <Q> int countMonthlyActiveUsers(Class<Q> entityClass) {
+        Query query = new Query(Criteria.where("monthStatus").is("ACTIVE"));
+        return (int) mongoTemplate.count(query, entityClass, USER_COLLECTION);
+    }
+
+    public <Q> double calculateRetentionRate(Class<Q> entityClass) {
+        Calendar lastMonth = Calendar.getInstance();
+        lastMonth.add(Calendar.MONTH, -1);
+        Date oneMonthAgo = lastMonth.getTime();
+
+        Query oldUsersQuery = new Query(Criteria.where("createdAt").lt(oneMonthAgo));
+        long totalOldUsers = mongoTemplate.count(oldUsersQuery, entityClass, USER_COLLECTION);
+
+        if (totalOldUsers == 0) {
+            return 0.0;
+        }
+
+        Query activeOldUsersQuery = new Query(
+                Criteria.where("createdAt").lt(oneMonthAgo)
+                        .and("monthStatus").is("ACTIVE")
+        );
+        long activeOldUsers = mongoTemplate.count(activeOldUsersQuery, entityClass, USER_COLLECTION);
+
+        return (double) activeOldUsers / totalOldUsers;
     }
 
 }
