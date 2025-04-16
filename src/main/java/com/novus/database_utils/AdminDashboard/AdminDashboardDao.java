@@ -24,7 +24,11 @@ public class AdminDashboardDao<T> {
     private static final String ADMIN_DASHBOARD_COLLECTION = "ADMIN_DASHBOARD";
 
     public Optional<T> findMe(Class<T> entityClass) {
-        return Optional.of(mongoTemplate.findOne(new Query().limit(1), entityClass, ADMIN_DASHBOARD_COLLECTION));
+        return Optional.ofNullable(mongoTemplate.findOne(new Query().limit(1), entityClass, ADMIN_DASHBOARD_COLLECTION));
+    }
+
+    public void save(T adminDashboard) {
+        mongoTemplate.save(adminDashboard, ADMIN_DASHBOARD_COLLECTION);
     }
 
     public <T1, T2, T3, T4> void upsert(String id, Map<Integer, Double> appRatingByNumberOfRate,
