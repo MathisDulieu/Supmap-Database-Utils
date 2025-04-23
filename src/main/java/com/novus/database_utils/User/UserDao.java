@@ -27,7 +27,7 @@ public class UserDao<T> {
     private static final String USER_COLLECTION = "USERS";
 
     public Optional<T> findById(String id, Class<T> entityClass) {
-        return Optional.of(mongoTemplate.findById(id, entityClass, USER_COLLECTION));
+        return Optional.ofNullable(mongoTemplate.findById(id, entityClass, USER_COLLECTION));
     }
 
     public void save(T entity) {
