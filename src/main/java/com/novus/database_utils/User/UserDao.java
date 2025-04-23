@@ -47,7 +47,7 @@ public class UserDao<T> {
     }
 
     public Optional<T> findByEmail(String email, Class<T> entityClass) {
-        return Optional.of(mongoTemplate.findOne(new Query(Criteria.where("email").is(email)), entityClass, USER_COLLECTION));
+        return Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("email").is(email)), entityClass, USER_COLLECTION));
     }
 
     public List<T> searchUsersByUsernamePrefix(String keyword, int page, Class<T> entityClass) {
