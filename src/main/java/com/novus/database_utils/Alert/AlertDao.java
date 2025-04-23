@@ -33,24 +33,32 @@ public class AlertDao<T> {
         mongoTemplate.remove(entity, ALERT_COLLECTION);
     }
 
-    public List<T> findAlertsByPosition(double latitude, double longitude, Class<T> entityClass) {
-        Point center = new Point(longitude, latitude);
+    public List<T> findAlertsByPositionAndExpiration(double latitude, double longitude, Date currentDate, Class<T> entityClass) {
+        double radiusInDegrees = 500 / 111000.0;
 
-        Distance distance = new Distance(0.5, Metrics.KILOMETERS);
+        double radiusLongitudeDegrees = radiusInDegrees / Math.cos(Math.toRadians(latitude));
 
-        Circle circle = new Circle(center, distance);
+        double minLatitude = latitude - radiusInDegrees;
+        double maxLatitude = latitude + radiusInDegrees;
+        double minLongitude = longitude - radiusLongitudeDegrees;
+        double maxLongitude = longitude + radiusLongitudeDegrees;
 
         Query query = new Query(
-                Criteria.where("location").withinSphere(circle)
+                new Criteria().andOperator(
+                        Criteria.where("location.latitude").gte(minLatitude).lte(maxLatitude),
+                        Criteria.where("location.longitude").gte(minLongitude).lte(maxLongitude),
+                        new Criteria().orOperator(
+                                Criteria.where("expiresAt").gt(currentDate),
+                                Criteria.where("expiresAt").isNull()
+                        )
+                )
         );
 
         return mongoTemplate.find(query, entityClass, ALERT_COLLECTION);
     }
 
-    public <G, E> List<E> findAlertsByRoute(List<G> geoPoints, Class<E> entityClass) {
+    public <G, E> List<E> findAlertsByRoute(List<G> geoPoints, Date currentDate, Class<E> entityClass) {
         Set<E> uniqueAlerts = new HashSet<>();
-
-        Distance distance = new Distance(0.5, Metrics.KILOMETERS);
 
         for (G point : geoPoints) {
             try {
@@ -60,12 +68,24 @@ public class AlertDao<T> {
                 Double latitude = (Double) getLatMethod.invoke(point);
                 Double longitude = (Double) getLngMethod.invoke(point);
 
-                Point center = new Point(longitude, latitude);
+                double radiusInDegrees = 500 / 111000.0;
 
-                Circle circle = new Circle(center, distance);
+                double radiusLongitudeDegrees = radiusInDegrees / Math.cos(Math.toRadians(latitude));
+
+                double minLatitude = latitude - radiusInDegrees;
+                double maxLatitude = latitude + radiusInDegrees;
+                double minLongitude = longitude - radiusLongitudeDegrees;
+                double maxLongitude = longitude + radiusLongitudeDegrees;
 
                 Query query = new Query(
-                        Criteria.where("location").withinSphere(circle)
+                        new Criteria().andOperator(
+                                Criteria.where("location.latitude").gte(minLatitude).lte(maxLatitude),
+                                Criteria.where("location.longitude").gte(minLongitude).lte(maxLongitude),
+                                new Criteria().orOperator(
+                                        Criteria.where("expiresAt").gt(currentDate),
+                                        Criteria.where("expiresAt").isNull()
+                                )
+                        )
                 );
 
                 List<E> alertsNearPoint = mongoTemplate.find(query, entityClass, ALERT_COLLECTION);
